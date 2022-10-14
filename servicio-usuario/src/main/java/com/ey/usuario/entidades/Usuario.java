@@ -33,9 +33,7 @@ public class Usuario {
     private Calendar modified;
     @CreationTimestamp
     private Calendar last_login;
-    @GeneratedValue
-    @Column(columnDefinition = "uuid")
-    private UUID token;
+    private String token;
     private boolean isactive;
 
     public String getName() {
@@ -102,11 +100,11 @@ public class Usuario {
 		this.last_login = last_login;
 	}
 
-    public UUID getToken() {
+    public String getToken() {
 		return token;
 	}
 
-    public void setToken(UUID token) {
+    public void setToken(String token) {
 		this.token = token;
 	}
 
