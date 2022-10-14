@@ -15,14 +15,14 @@ public class RespuestaRegistro {
     private Calendar created;
     private Calendar modified;
     private Calendar last_login;
-    private UUID token;
+    private String token;
     private boolean isactive;
     private Respuesta respuesta;
     
     public RespuestaRegistro() {}
     
 	public RespuestaRegistro(UUID idUsuario, String name, String email, String password, List<RespuestaTelefono> phones,
-			Calendar created, Calendar modified, Calendar last_login, UUID token, boolean isactive, Respuesta respuesta) {
+			Calendar created, Calendar modified, Calendar last_login, String token, boolean isactive, Respuesta respuesta) {
 		super();
 		this.idUsuario = idUsuario;
 		this.name = name;
@@ -101,11 +101,11 @@ public class RespuestaRegistro {
 		this.last_login = last_login;
 	}
 
-	public UUID getToken() {
+	public String getToken() {
 		return token;
 	}
 
-	public void setToken(UUID token) {
+	public void setToken(String token) {
 		this.token = token;
 	}
 

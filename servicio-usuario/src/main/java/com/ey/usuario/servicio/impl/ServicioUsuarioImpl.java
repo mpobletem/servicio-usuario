@@ -1,8 +1,16 @@
 package com.ey.usuario.servicio.impl;
 
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.regex.Pattern;
+
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +26,15 @@ import com.ey.usuario.entidades.Usuario;
 import com.ey.usuario.servicio.IServicioUsuario;
 import com.ey.usuario.variables.Codigos;
 
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 @Service
 public class ServicioUsuarioImpl implements IServicioUsuario{
 
+	private static String SECRET_KEY = "oeRaYY7Wo24sDqKSX3IM9ASGmdGPmkTd9jo1QTy4b7P9Ze5_9hKolVX8xNrQDcNRfVEdTZNOuOyqEGhXEbdJI-ZQ19k_o9MI0y3eZN2lp9jow55FfXMiINEdt1XR85VipRLSOkT6kSpzs2x-jbLDiz9iFVzkd81YKxMgPA7VfZeQUm4n-mOmnWMaVX30zGFU4L3oPBctYKkl4dYfqYWqRNfrgPJVi5DGFjywgxx0ASEiJHtV72paI3fDR2XwlSkyhhmY-ICjCRmsJN4fX1pdoL8a18-aQrvyu4j0Os6dVPYIoPvvY0SAZtWYKHfM15g7A3HD4cVREf9cUsprCRK93w";
+	
 	@Autowired
 	UsuarioRepository repository;
 	
@@ -47,7 +61,11 @@ public class ServicioUsuarioImpl implements IServicioUsuario{
 					}
 					_user.setPhones(_fonos);
 					_user.setIsactive(true);
-					_user.setToken(java.util.UUID.randomUUID());
+					
+					Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+					c.add(Calendar.MONTH, 12);
+					long fechaExpira = c.getTimeInMillis();
+					_user.setToken(crearJWT(usuario.getName(),usuario.getEmail(),fechaExpira));
 					
 					_user = repository.save(_user);
 					
@@ -115,6 +133,7 @@ public class ServicioUsuarioImpl implements IServicioUsuario{
 	private boolean validarCorreo(String correo) {
 		boolean _correoValido = false;
 		
+		// Patrón para validar formato de correo
 		String correo_regex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
 		Pattern correo_pattern = Pattern.compile(correo_regex, Pattern.CASE_INSENSITIVE);
  
@@ -135,6 +154,37 @@ public class ServicioUsuarioImpl implements IServicioUsuario{
         	_passValida = true;
         
 		return _passValida;
+	}
+	
+	public static String crearJWT( String nombre, String correo, long ttlMillis) {
+		  
+	    //El algoritmo de firma JWT que usaremos para firmar el token
+	    SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+	    long nowMillis = System.currentTimeMillis();
+	    Date hoy = new Date(nowMillis);
+
+	    //Firmaremos nuestro JWT con nuestro secreto ApiKey
+	    byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
+	    Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+	    //Configuración de los Claims para JWT
+	    JwtBuilder builder = Jwts.builder()
+					    		.setId(UUID.randomUUID().toString())
+					            .setIssuedAt(hoy)
+					            .setSubject(nombre)
+					            .setIssuer(correo)
+					            .signWith(signatureAlgorithm, signingKey);
+					  
+	    //Si se ha especificado, agreguemos la caducidad
+	    if (ttlMillis > 0) {
+	        long expMillis = nowMillis + ttlMillis;
+	        Date exp = new Date(expMillis);
+	        builder.setExpiration(exp);
+	    }  
+	  
+	    //Crea el JWT y lo serializa en una cadena compacta segura para URL
+	    return builder.compact();
 	}
 
 }
