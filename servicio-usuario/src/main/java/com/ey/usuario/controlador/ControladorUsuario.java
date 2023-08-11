@@ -24,7 +24,7 @@ public class ControladorUsuario {
 	@PostMapping("/registro")
 	public RespuestaRegistro registrarUsuario(
 			@RequestBody UsuarioRegistro usuario) {
-		return servicioUsuario.c(usuario);
+		return servicioUsuario.registrarUsuario(usuario);
 	}
 	
 }
