@@ -5,7 +5,7 @@ public enum Codigos {
 	EXITO(1,"Se ha registrado al usuario con éxito"), 
 	ERROR(0,"Se ha producido un error al registrar al usuario"),
 	FORMATO_CORREO(2,"El formato del correo no es el correcto"),
-	FORMATO_PASS(3,"La contraseña no cumple los campos mínimos"),
+	FORMATO_PASS(3,"La contrasena no cumple los campos mínimos"),
 	CORREO_EXISTENTE(4,"El correo ya registrado");
 	
 	private int codigo;

@@ -37,14 +37,14 @@ public class ServicioUsuarioImpl implements IServicioUsuario{
 	
 	@Autowired
 	UsuarioRepository repository;
-	
+	  <
 	@Override
 	public RespuestaRegistro registrarUsuario(UsuarioRegistro usuario) {
 		RespuestaRegistro _resRegistro = new RespuestaRegistro();
 		try {
 			boolean _correoValido = validarCorreo(usuario.getEmail());
 			if(_correoValido) {
-				boolean _passValida = validarContraseña(usuario.getPassword());
+				boolean _passValida = validarContrasena(usuario.getPassword());
 				if(_passValida) {
 					
 					Usuario _user = new Usuario();
@@ -143,10 +143,10 @@ public class ServicioUsuarioImpl implements IServicioUsuario{
         return _correoValido;
 	}
 	
-	private boolean validarContraseña(String pass) {
+	private boolean validarContrasena(String pass) {
 		boolean _passValida = false;
 		
-		// Patrón para validar la contraseña
+		// Patrón para validar la contrasena
 		String password_regex = "^(?=(.*?\\d){2})(?=.*[A-Z])(?=(.*?[a-z]){2}).{4,}$";
 		Pattern password_pattern = Pattern.compile(password_regex);
 		
